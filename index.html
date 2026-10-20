@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>yell_DuplicateText — Editor Teks Multi-Halaman</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<header><div class="brand"><div class="logo">✦</div><div><b>yell_DuplicateText</b><small>Editor Teks Multi-Halaman</small></div></div><div class="top-actions"><button id="undo">Undo</button><button id="redo">Redo</button><button id="themeToggle" title="Ganti mode tampilan">🌙 Mode gelap</button><button id="saveProject">Simpan Proyek</button><button class="primary" id="exportTop">Ekspor Halaman ↗</button></div></header>
+<main class="layout">
+<aside class="panel left">
+<section><h3>01 · LATAR HALAMAN</h3><label class="upload" for="bgFile"><b>＋ Unggah desain</b><small>PNG, JPG, atau PDF</small></label><input id="bgFile" type="file" accept=".png,.jpg,.jpeg,.pdf" hidden><p class="hint">PDF menggunakan halaman pertama.</p></section>
+<section><h3>02 · TAMBAH TEKS / ELEMEN</h3><div class="tools"><button data-type="Nama" class="chosen">T<br><small>Nama</small></button><button data-type="Teks">≡<br><small>Teks</small></button><button data-type="Angka">123<br><small>Angka</small></button><button data-type="Garis">／<br><small>Garis</small></button><button data-type="Kotak">□<br><small>Kotak</small></button><button data-type="Lingkaran">○<br><small>Lingkaran</small></button></div><label>Isi teks</label><input id="newText" value="{nama}"><button class="primary full" id="addElement">＋ Tambahkan elemen</button><p class="hint">Gunakan {nama} dan {nomor} sebagai placeholder.</p></section>
+<section><h3>03 · DAFTAR ELEMEN</h3><div id="elements"><p class="hint">Belum ada elemen.</p></div></section>
+<section><h3>04 · DATA HALAMAN</h3><label class="upload compact" for="excelFile"><b>▤ Unggah Excel / CSV</b><small>.xlsx atau .csv</small></label><input id="excelFile" type="file" accept=".xlsx,.csv" hidden><div id="excelStatus" class="status">Belum ada file halaman.</div><div id="mapping" hidden><label>Kolom teks/nama</label><select id="nameCol"></select><label>Kolom nomor (opsional)</label><select id="numberCol"></select><div id="tablePreview"></div></div></section>
+</aside>
+<section class="workspace"><div class="workspace-head"><div><h1>yell_DuplicateText</h1><p>Edit satu halaman, beberapa halaman, atau terapkan perubahan ke semua halaman.</p></div><div class="zoom"><button id="zoomOut">−</button><span id="zoomLabel">100%</span><button id="zoomIn">＋</button><button id="fit">Sesuaikan</button></div></div>
+<div id="canvasWrap"><canvas id="canvas" width="1200" height="800"></canvas><div id="empty"><div class="emptyicon">▧</div><h2>Mulai mengedit halaman</h2><p>Unggah gambar atau PDF sebagai latar halaman.</p><button class="primary" id="pickBg">Pilih desain</button></div></div>
+<div class="under"><span id="dimensions">Ukuran kanvas: 1200 × 800</span><span>Klik elemen, lalu geser untuk memindahkan.</span></div>
+<div class="preview"><div><h2>Pratinjau halaman</h2><p>Pindah halaman untuk melihat dan mengedit isinya.</p></div><div class="nav"><button id="prev">←</button><span id="personCount">Contoh</span><button id="next">→</button></div><p id="previewText" class="previewtext">Contoh Nama Halaman</p></div></section>
+<aside class="panel right"><section><h3>CAKUPAN PENGEDITAN</h3>
+<label for="editScope">Terapkan perubahan ke</label>
+<select id="editScope"><option value="all">Semua halaman sekaligus</option><option value="current">Halaman ini saja</option><option value="range">Rentang halaman tertentu</option></select>
+<div id="editRangeFields" class="range-fields" hidden><div><label for="editStart">Dari halaman</label><input id="editStart" type="number" min="1" value="1"></div><div><label for="editEnd">Sampai halaman</label><input id="editEnd" type="number" min="1" value="1"></div></div>
+<p class="hint" id="editScopeHint">Perubahan diterapkan ke semua halaman. Pilih opsi lain untuk mengedit halaman tertentu.</p></section><section><h3>PROPERTI ELEMEN</h3><p id="noSelection" class="hint">Pilih elemen di kanvas atau daftar.</p><div id="props" hidden><label>Jenis elemen</label><div id="typeLabel" class="status"></div><label>Isi teks</label><input id="pText"><div class="twocol"><div><label>X</label><input id="pX" type="number"></div><div><label>Y</label><input id="pY" type="number"></div></div><label>Ukuran <span id="sizeLabel"></span></label><input id="pSize" type="range" min="1" max="140" value="42"><label>Font</label><select id="pFont">
+<option>Arial</option><option>Georgia</option><option>Times New Roman</option><option>Verdana</option>
+<option>Trebuchet MS</option><option>Courier New</option><option>Palatino Linotype</option>
+<option>Garamond</option><option>Book Antiqua</option><option>Lucida Handwriting</option>
+<option>Brush Script MT</option><option>Segoe Script</option><option>Monotype Corsiva</option>
+<option>URW Chancery L</option><option>Comic Sans MS</option><option>Impact</option>
+</select>
+<label class="upload compact font-upload" for="fontFile"><b>＋ Tambah font sendiri</b><small>TTF, OTF, WOFF, atau WOFF2</small></label>
+<input id="fontFile" type="file" accept=".ttf,.otf,.woff,.woff2,font/ttf,font/otf,font/woff,font/woff2" hidden>
+<div id="fontStatus" class="hint">Font tambahan hanya tersedia di browser ini selama sesi berjalan.</div><label>Warna</label><input id="pColor" type="color" value="#20243a"><label>Perataan</label><select id="pAlign"><option value="center">Tengah</option><option value="left">Kiri</option><option value="right">Kanan</option></select><div class="twocol"><button id="duplicate">Duplikat</button><button id="delete" class="danger">Hapus</button></div></div></section>
+<section><h3>EKSPOR HALAMAN</h3><p class="hint">Ekspor hasil edit untuk halaman yang dipilih.</p><label>Rentang halaman yang diunduh</label>
+<div class="range-fields">
+  <div><label for="rangeStart">Dari nomor</label><input id="rangeStart" type="number" min="1" value="1"></div>
+  <div><label for="rangeEnd">Sampai nomor</label><input id="rangeEnd" type="number" min="1" value="1"></div>
+</div>
+<p class="hint" id="rangeHint">Unggah file data untuk menentukan jumlah halaman.</p>
+<label>Awalan nama file</label><input id="prefix" value="yell_DuplicateText"><label class="check"><input type="checkbox" id="png" checked> PNG per halaman</label><label class="check"><input type="checkbox" id="pdf" checked> PDF per halaman</label><label class="check"><input type="checkbox" id="merged"> Satu PDF multi-halaman</label><label>Kualitas gambar</label><select id="scale"><option value="1">Standar</option><option value="1.5" selected>Tinggi</option><option value="2">Sangat tinggi</option></select><button class="primary full" id="export">Unduh halaman terpilih</button><div id="progressArea" hidden><progress id="progress" max="100" value="0"></progress><p id="progressText" class="hint"></p></div><div id="downloads"></div><p class="hint">🔒 Pemrosesan dilakukan di browser; data tidak dikirim ke server.</p></section><section><h3>PROYEK</h3><label class="upload compact" for="projectFile"><b>↥ Buka proyek</b><small>JSON proyek yell_DuplicateText</small></label><input id="projectFile" type="file" accept=".json,.halamanku" hidden></section></aside>
+</main><footer>yell_DuplicateText · Editor teks multi-halaman</footer>
+<script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script><script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script><script src="app.js"></script>
+</body></html>
